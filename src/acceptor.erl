@@ -4,7 +4,7 @@
 -export([start/0]).
 
 start() ->
-  prepare(0, sets:new()).
+  prepare(-1, sets:new()).
 
 prepare(APN, Accepted) ->
   receive 

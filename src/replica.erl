@@ -27,7 +27,7 @@ next(Database, Leaders, Slot_in, Slot_out, Proposals, Decisions, Requests) ->
 
 
 propose(Database, Slot_in, Slot_out, Leaders, [], Decisions, Proposals) -> 
-  next(Database, Leaders, Slot_in, Slot_out, sets:from_list(Proposals), sets:from_list(Decisions), sets:from_list([]));
+  next(Database, Leaders, Slot_in, Slot_out, sets:from_list(Proposals), sets:from_list(Decisions), sets:new());
 
 propose(Database, Slot_in, Slot_out, Leaders, [ C | Requests ], Decisions, Proposals) ->
   WINDOW = 5,
@@ -39,9 +39,9 @@ propose(Database, Slot_in, Slot_out, Leaders, [ C | Requests ], Decisions, Propo
         [ Leader ! {propose, Slot_in, C} || Leader <- Leaders ],
         propose(Database, Slot_in+1, Slot_out, Leaders, Requests, Decisions, sets:to_list(NewProposals));
       true -> 
-        propose(Database, Slot_in+1, Slot_out, Leaders, Requests, Decisions, Proposals)
+        propose(Database, Slot_in+1, Slot_out, Leaders, [ C | Requests], Decisions, Proposals)
     end;
-    true -> next(Database, Leaders, Slot_in, Slot_out, sets:from_list(Proposals), 
+    true -> next(Database, Leaders, Slot_in+1, Slot_out, sets:from_list(Proposals), 
                          sets:from_list(Decisions), sets:from_list([ C | Requests ]))
   end.
    

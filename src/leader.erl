@@ -37,8 +37,9 @@ receiveMessage(Acceptors, Replicas, ProposalNumber, Active, Proposals) ->
        receiveMessage(Acceptors, Replicas, ProposalNumber, true, sets:from_list(NewProposals));
      {preempted, R} -> 
        if R > ProposalNumber ->
-           spawn(scout, start, [self(), Acceptors, ProposalNumber+1]),
-           receiveMessage(Acceptors, Replicas, ProposalNumber+1, false, Proposals);
+           NewProposalN = R+1,
+           spawn(scout, start, [self(), Acceptors, NewProposalN]),
+           receiveMessage(Acceptors, Replicas, NewProposalN, false, Proposals);
          true -> 
            receiveMessage(Acceptors, Replicas, ProposalNumber, Active, Proposals)
        end
