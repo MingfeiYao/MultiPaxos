@@ -24,5 +24,13 @@ clean:
 SYSTEM	= system
 L_ERL	= erl -noshell -pa ebin -setcookie pass
 
+ifeq ($(ns),)
+	ns := 5
+endif
+
+ifeq ($(nc),)
+	nc := 3
+endif
+
 run:	all
-	$(L_ERL) -s $(SYSTEM) start
+	$(L_ERL) -s $(SYSTEM) start $(ns) $(nc)

@@ -1,3 +1,11 @@
 To run the system:
 
+cd into src
+
+To run the system with default parameters (5 servers, 3 clients):
+
 make run
+
+To run with custom parameters e.g. 10 servers 5 clients:
+
+make run ns=10 nc=5

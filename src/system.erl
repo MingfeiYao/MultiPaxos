@@ -3,11 +3,12 @@
 %%% coursework 2, paxos made moderately complex
 
 -module(system).
--export([start/0]).
+-export([start/1]).
 
-start() ->
-  N_servers  = 5,
-  N_clients  = 3,
+start([NS, NC]) ->
+  % Parameters for systens
+  N_servers  = list_to_integer(atom_to_list(NS)),
+  N_clients = list_to_integer(atom_to_list(NC)),
   N_accounts = 10,
   Max_amount = 1000,   
 
@@ -29,4 +30,3 @@ start() ->
     || _ <- lists:seq(1, N_clients) ],
 
   done.
-

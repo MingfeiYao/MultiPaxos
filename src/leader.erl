@@ -29,12 +29,14 @@ receiveMessage(Acceptors, Replicas, ProposalNumber, Active, Proposals) ->
         true ->
           receiveMessage(Acceptors, Replicas, ProposalNumber, Active, Proposals)
       end;
+
      {adopted, _, PVal} ->
        NewProposals = updateCommand(sets:to_list(Proposals), sets:to_list(PVal)),
        [ spawn(commander, start, 
           [self(), Acceptors, Replicas, ProposalNumber, Slot, Command]) 
           || {Slot, Command} <- NewProposals ],
        receiveMessage(Acceptors, Replicas, ProposalNumber, true, sets:from_list(NewProposals));
+
      {preempted, R} -> 
        if R > ProposalNumber ->
            NewProposalN = R+1,
@@ -57,6 +59,7 @@ checkSlot(Slot, [{S, _} | Tail]) ->
       checkSlot(Slot, Tail)
   end.
 
+% Helper function for updating commands for all slots
 updateCommand([ {S, C} | Commands ], PVal) ->
   NewC = pmax(-1, C, PVal, S),
   [{S, NewC}] ++ updateCommand(Commands, PVal);
@@ -64,6 +67,7 @@ updateCommand([ {S, C} | Commands ], PVal) ->
 updateCommand([], _) ->
   [].
 
+% Helper function for working out pmax
 pmax(Seen, Command, [{PN, S_, C} | Tail], S) ->
   if S == S_ ->
       if PN < Seen ->
